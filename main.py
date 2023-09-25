@@ -10,6 +10,7 @@ start_time = time.time()
 files_completed = 0
 region_radius = 3
 files_total = (region_radius * 2)**2
+water_floor = False
 
 def main(region_radius):
     if __name__ == "__main__":
@@ -44,17 +45,20 @@ def create_region_file(i, j):
     # define block objects
     bedrock = anvil.Block('minecraft', 'bedrock')
     water = anvil.Block('minecraft', 'water')
-    oak_log = anvil.Block('minecraft', "oak_log")
-    oak_leaves = anvil.Block('minecraft', "oak_leaves")
 
     # make an array of coordinates for the location of each sphere
     rand_size_list, rand_coords = wd.planet_array(50, region_origin)
 
     # add floor (bedrock and water, can switch to air later)
-    subfloor = wd.plane(1)
-    floor = wd.plane(2)
-    region = wd.apply_block(region, (region_origin[0], -63, region_origin[1]), subfloor, bedrock)
-    region = wd.apply_block(region, (region_origin[0], -62, region_origin[1]), floor, water)
+    if water_floor:
+        subfloor = wd.plane(1)
+        floor = wd.plane(2)
+        region = wd.apply_block(region, (region_origin[0], -63, region_origin[1]), subfloor, bedrock)
+        region = wd.apply_block(region, (region_origin[0], -62, region_origin[1]), floor, water)
+    else:
+        subfloor = wd.plane(1)
+        region = wd.apply_block(region, (region_origin[0], -63, region_origin[1]),
+                                subfloor, anvil.Block('minecraft', 'air'))
 
     # create spheres at previously defined locations and fill blocks
     wd.make_planets(region, rand_size_list, rand_coords)

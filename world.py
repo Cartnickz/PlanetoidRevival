@@ -238,12 +238,13 @@ class World:
                 inner_block = [anvil.Block('minecraft', 'sculk'),
                                anvil.Block('minecraft', 'sculk_sensor'),
                                anvil.Block('minecraft', 'sculk_catalyst'),
-                               anvil.Block('minecraft', 'stone_brick'),
+                               anvil.Block('minecraft', 'stone_bricks'),
                                anvil.Block('minecraft', 'obsidian'),
-                               anvil.Block('minecraft', 'sculk_shrieker')
+                               anvil.Block('minecraft', 'sculk_shrieker', {"can_summon": "true"})
                                             ]
-                outer_block = [anvil.Block('minecraft', 'sculk'), anvil.Block('minecraft', 'sculk_sensor'),
-                               anvil.Block('minecraft', 'stone_brick'), anvil.Block('minecraft', 'obsidian')]
+                outer_block = [anvil.Block('minecraft', 'sculk'), anvil.Block('minecraft', 'sculk'),
+                               anvil.Block('minecraft', 'sculk_sensor'), anvil.Block('minecraft', 'crying_obsidian'),
+                               anvil.Block('minecraft', 'obsidian')]
 
             # ocean planet
             else:
