@@ -2,6 +2,7 @@ import anvil
 import multiprocessing
 from world import World as wd
 import time
+import numpy as np
 import random
 
 # open region files
@@ -18,16 +19,17 @@ def main(region_radius):
             for j in range(-region_radius, region_radius):
                 file_gen_list += [(i, j)]
 
-        split = len(file_gen_list) // 2
+        thread_count = multiprocessing.cpu_count()-1
+        file_assign = np.array_split(file_gen_list, thread_count)
 
-        p1 = multiprocessing.Process(target=process_regions, args=(file_gen_list[0:split],))
-        p2 = multiprocessing.Process(target=process_regions, args=(file_gen_list[split:],))
+        all_processes = []
+        for thread_num in range(thread_count):
+            p = multiprocessing.Process(target=process_regions, args=(file_assign[thread_num],))
+            all_processes.append(p)
+            p.start()
 
-        p1.start()
-        p2.start()
-
-        p1.join()
-        p2.join()
+        for p in all_processes:
+            p.join()
         print("Done!")
 
 def process_regions(process_list):
