@@ -2,3 +2,4 @@
 *.mca
 .DS_Store
 __pycache__/world.cpython-310.pyc
+region/r.0.0.mca

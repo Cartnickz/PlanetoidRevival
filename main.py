@@ -8,7 +8,7 @@ import random
 # open region files
 start_time = time.time()
 files_completed = 0
-region_radius = 2
+region_radius = 6
 files_total = (region_radius * 2)**2
 
 def main(region_radius):
@@ -38,7 +38,6 @@ def process_regions(process_list):
 
 
 def create_region_file(i, j):
-    print("Making file: " + str(i) + " " + str(j))
     region = anvil.EmptyRegion(i, j)
     region_origin = (i * 512, j * 512)
 
@@ -66,7 +65,15 @@ def create_region_file(i, j):
     # region file
     filename = 'region/r.' + str(i) + '.' + str(j) + '.mca'
     region.save(filename)
-    print("--- %s seconds ---" % (time.time() - start_time))
+
+    i_str = str(i)
+    if i >= 0:
+        i_str = "+" + str(i)
+    j_str = str(j)
+    if j >= 0:
+        j_str = "+" + str(j)
+
+    print("--- Finished region " + i_str + '\t' + j_str + " in %s seconds ---" % (time.time() - start_time))
 
 main(region_radius)
 

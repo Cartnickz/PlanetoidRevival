@@ -51,7 +51,7 @@ class World:
             rand_size = random.randint(4, 20)
             rand_size_list += [rand_size]
             rand_x = random.randint(region_origin[0] + rand_size, region_origin[0] + 511 - rand_size)
-            rand_y = random.randint(-35 + rand_size, 200 - rand_size)
+            rand_y = random.randint(-35 + rand_size, 191 - rand_size)
             rand_z = random.randint(region_origin[1] + rand_size, region_origin[1] + 511 - rand_size)
             rand_coords += [(rand_x, rand_y, rand_z)]
 
