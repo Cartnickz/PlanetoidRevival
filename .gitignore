@@ -1,2 +1,4 @@
 
 *.mca
+.DS_Store
+__pycache__/world.cpython-310.pyc
