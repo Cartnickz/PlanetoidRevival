@@ -1,22 +1,42 @@
 import anvil
 import multiprocessing
 from world import World as wd
-
+import time
 import random
 
 # open region files
+start_time = time.time()
 files_completed = 0
 region_radius = 2
 files_total = (region_radius * 2)**2
 
 def main(region_radius):
-    print("in  main")
-    for i in range(-region_radius, region_radius):
-        for j in range(-region_radius, region_radius):
-            create_region_file(i, j)
+    if __name__ == "__main__":
+        print("Starting Planetoids Generator!")
+        file_gen_list = []
+        for i in range(-region_radius, region_radius):
+            for j in range(-region_radius, region_radius):
+                file_gen_list += [(i, j)]
+
+        split = len(file_gen_list) // 2
+
+        p1 = multiprocessing.Process(target=process_regions, args=(file_gen_list[0:split],))
+        p2 = multiprocessing.Process(target=process_regions, args=(file_gen_list[split:],))
+
+        p1.start()
+        p2.start()
+
+        p1.join()
+        p2.join()
+        print("Done!")
+
+def process_regions(process_list):
+    for region in process_list:
+        create_region_file(region[0], region[1])
+
 
 def create_region_file(i, j):
-    print("making file")
+    print("Making file: " + str(i) + " " + str(j))
     region = anvil.EmptyRegion(i, j)
     region_origin = (i * 512, j * 512)
 
@@ -44,6 +64,7 @@ def create_region_file(i, j):
     # region file
     filename = 'region/r.' + str(i) + '.' + str(j) + '.mca'
     region.save(filename)
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 main(region_radius)
 
