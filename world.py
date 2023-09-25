@@ -122,8 +122,8 @@ class World:
                                anvil.Block('minecraft', 'flowering_azalea_leaves')]
 
 
-        elif 0.3 < choice_1 <= 0.6:
-        # soil planet 30%
+        elif 0.3 < choice_1 <= 0.7:
+        # soil planet 40%
             soil_planet = True
             choice_2 = random.random()
             # grass planet 50%
@@ -158,8 +158,8 @@ class World:
                 inner_block = anvil.Block('minecraft', 'clay')
                 outer_block = anvil.Block('minecraft', 'terracotta')
 
-        # stone planet 30%
-        elif 0.6 < choice_1 <= .90:
+        # stone planet 20%
+        elif 0.7 < choice_1 <= .90:
             choice_2 = random.random()
             outer_block = [anvil.Block('minecraft', 'stone'), anvil.Block('minecraft', 'stone'),
                            anvil.Block('minecraft', 'stone'), anvil.Block('minecraft', 'stone'),
@@ -219,7 +219,14 @@ class World:
             # lava planet
             elif 0.20 < choice_2 <= 0.40:
                 inner_block = anvil.Block('minecraft', 'lava')
-                outer_block = anvil.Block('minecraft', 'magma_block')
+                outer_block = [anvil.Block('minecraft', 'magma_block'),
+                               anvil.Block('minecraft', 'magma_block'),
+                               anvil.Block('minecraft', 'magma_block'),
+                               anvil.Block('minecraft', 'cracked_deepslate_bricks'),
+                               anvil.Block('minecraft', 'cracked_deepslate_tiles'),
+                               anvil.Block('minecraft', 'deepslate_bricks'),
+                               anvil.Block('minecraft', 'deepslate_tiles')]
+
 
             # slime planet
             elif 0.40 < choice_2 <= 0.60:
