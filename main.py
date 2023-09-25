@@ -8,7 +8,7 @@ import random
 # open region files
 start_time = time.time()
 files_completed = 0
-region_radius = 6
+region_radius = 3
 files_total = (region_radius * 2)**2
 
 def main(region_radius):
@@ -57,10 +57,7 @@ def create_region_file(i, j):
     region = wd.apply_block(region, (region_origin[0], -62, region_origin[1]), floor, water)
 
     # create spheres at previously defined locations and fill blocks
-    for n in range(len(rand_coords)):
-        inner, outer = wd.sphere(rand_size_list[n])
-        region = wd.apply_block(region, rand_coords[n], inner, oak_log)
-        region = wd.apply_block(region, rand_coords[n], outer, oak_leaves)
+    wd.make_planets(region, rand_size_list, rand_coords)
 
     # region file
     filename = 'region/r.' + str(i) + '.' + str(j) + '.mca'
