@@ -45,7 +45,7 @@ class World:
         region.save(filename)
 
     @staticmethod
-    def sphere(x, y, z, size):
+    def sphere_test(x, y, z, size):
         region = anvil.EmptyRegion(0, 0)
         # Create `Block` objects that are used to set blocks
         stone = anvil.Block('minecraft', 'stone')
@@ -54,7 +54,6 @@ class World:
         bedrock = anvil.Block('minecraft', 'bedrock')
         water = anvil.Block('minecraft', 'water')
 
-        r_range = range(-size, size)
         top_layer_active = True
         top_layer = -65
         for b in range(size, -size, -1):
@@ -75,6 +74,38 @@ class World:
 
         filename = 'region/r.0.0.mca'
         region.save(filename)
+
+    @staticmethod
+    def sphere(size):
+        inner = []
+        outer = []
+        for y in range(size, -size, -1):
+            for x in range(-size, size):
+                for z in range(-size, size):
+                    dist = math.sqrt((x) ** 2 + (y) ** 2 + (z) ** 2)
+                    if dist < size - 2:
+                        inner += [(x, y, z)]
+                    elif dist < size:
+                        outer += [(x, y, z)]
+        return inner, outer
+
+    @staticmethod
+    def plane(depth):
+        list = []
+        for y in range(0, depth):
+            for x in range(0, 512):
+                for z in range(0, 512):
+                    list += [(x, y, z)]
+        return list
+
+    @staticmethod
+    def apply_block(region, region_coords, list, block):
+        region = region;
+        for coords in list:
+            region.set_block(block, region_coords[0] + coords[0],
+                             region_coords[1] + coords[1], region_coords[2] + coords[2])
+        print("Blocks applied")
+        return region
 
 
 
