@@ -28,11 +28,15 @@ class World:
         return list
 
     @staticmethod
-    def apply_block(region, region_coords, list, block):
+    def apply_block(region, region_coords, coord_list, block):
         region = region;
-        for coords in list:
-            region.set_block(block, region_coords[0] + coords[0],
-                             region_coords[1] + coords[1], region_coords[2] + coords[2])
+        for coords in coord_list:
+            if isinstance(block, list):
+                region.set_block(random.choice(block), region_coords[0] + coords[0],
+                                 region_coords[1] + coords[1], region_coords[2] + coords[2])
+            else:
+                region.set_block(block, region_coords[0] + coords[0],
+                                 region_coords[1] + coords[1], region_coords[2] + coords[2])
         return region
 
     @staticmethod
@@ -42,15 +46,8 @@ class World:
             inner, outer = World.sphere(rand_size[n])
             inner_block, outer_block, soil_planet = World.choose_planet_type()
 
-            if isinstance(inner_block, list):
-                region = World.apply_block(region, rand_coords[n], inner, random.choice(inner_block))
-            else:
-                region = World.apply_block(region, rand_coords[n], inner, inner_block)
-
-            if isinstance(outer_block, list):
-                region = World.apply_block(region, rand_coords[n], outer, random.choice(outer_block))
-            else:
-                region = World.apply_block(region, rand_coords[n], outer, outer_block)
+            region = World.apply_block(region, rand_coords[n], inner, inner_block)
+            region = World.apply_block(region, rand_coords[n], outer, outer_block)
 
         return region
 
@@ -122,7 +119,7 @@ class World:
             else:
                 inner_block = anvil.Block('minecraft', 'oak_log')
                 outer_block = [anvil.Block('minecraft', 'azalea_leaves'),
-                                             anvil.Block('minecraft', 'flowering_azalea_leaves')]
+                               anvil.Block('minecraft', 'flowering_azalea_leaves')]
 
 
         elif 0.3 < choice_1 <= 0.6:
@@ -136,14 +133,14 @@ class World:
 
             # gravel planet 15%
             elif 0.50 < choice_2 <= 0.65:
-                inner_block = anvil.Block('minecraft', 'andesite')
-                outer_block = anvil.Block('minecraft', 'gravel')
+                inner_block = anvil.Block('minecraft', 'gravel')
+                outer_block = anvil.Block('minecraft', 'andesite')
 
             # podzol planet 5%
             elif 0.65 < choice_2 <= 0.70:
                 inner_block = [anvil.Block('minecraft', 'dirt'),
-                                             anvil.Block('minecraft', 'coarse_dirt')]
-                outer_block = anvil.Block('minecraft', 'podzel')
+                               anvil.Block('minecraft', 'coarse_dirt')]
+                outer_block = anvil.Block('minecraft', 'podzol')
 
             # sand planet 15%
             elif 0.70 < choice_2 <= 0.85:
@@ -164,45 +161,52 @@ class World:
         # stone planet 30%
         elif 0.6 < choice_1 <= .90:
             choice_2 = random.random()
+            outer_block = [anvil.Block('minecraft', 'stone'), anvil.Block('minecraft', 'stone'),
+                           anvil.Block('minecraft', 'stone'), anvil.Block('minecraft', 'stone'),
+                           anvil.Block('minecraft', 'andesite'), anvil.Block('minecraft', 'diorite')]
+            inner_block = [anvil.Block('minecraft', 'stone'), anvil.Block('minecraft', 'tuff'),
+                           anvil.Block('minecraft', 'deepslate'), anvil.Block('minecraft', 'calcite'),
+                           anvil.Block('minecraft', 'granite')]
             # coal planet 30%
             if choice_2 <= 0.3:
-                inner_block = anvil.Block('minecraft', 'coal_ore')
-                outer_block = anvil.Block('minecraft', 'stone')
+                inner_block.append(anvil.Block('minecraft', 'coal_ore'))
+                inner_block.append(anvil.Block('minecraft', 'deepslate_coal_ore'))
 
             # iron planet 15%
             elif 0.30 < choice_2 <= 0.45:
-                inner_block = anvil.Block('minecraft', 'iron_ore')
-                outer_block = anvil.Block('minecraft', 'stone')
+                inner_block.append(anvil.Block('minecraft', 'iron_ore'))
+                inner_block.append(anvil.Block('minecraft', 'deepslate_iron_ore'))
 
             # copper planet 15%
             elif 0.45 < choice_2 <= 0.60:
-                inner_block = anvil.Block('minecraft', 'copper_ore')
-                outer_block = anvil.Block('minecraft', 'stone')
+                inner_block.append(anvil.Block('minecraft', 'copper_ore'))
+                inner_block.append(anvil.Block('minecraft', 'deepslate_copper_ore'))
 
             # redstone planet 10%
             elif 0.60 < choice_2 <= 0.70:
-                inner_block = anvil.Block('minecraft', 'redstone_ore')
-                outer_block = anvil.Block('minecraft', 'stone')
+                inner_block.append(anvil.Block('minecraft', 'redstone_ore'))
+                inner_block.append(anvil.Block('minecraft', 'deepslate_redstone_ore'))
 
             # lapiz planet 10%
             elif 0.70 < choice_2 <= 0.80:
-                inner_block = anvil.Block('minecraft', 'lapiz_lazuli_ore')
-                outer_block = anvil.Block('minecraft', 'stone')
+                inner_block.append(anvil.Block('minecraft', 'lapis_ore'))
+                inner_block.append(anvil.Block('minecraft', 'deepslate_lapis_ore'))
+
 
             # gold planet 10%
             elif 0.80 < choice_2 <= 0.90:
-                inner_block = anvil.Block('minecraft', 'gold_ore')
-                outer_block = anvil.Block('minecraft', 'stone')
+                inner_block.append(anvil.Block('minecraft', 'gold_ore'))
+                inner_block.append(anvil.Block('minecraft', 'deepslate_gold_ore'))
 
-            # diamond planet 5%
-            elif 0.90 < choice_2 <= 0.95:
-                inner_block = anvil.Block('minecraft', 'diamond_ore')
-                outer_block = anvil.Block('minecraft', 'stone')
+            # emerald planet 7%
+            elif 0.90 < choice_2 <= 0.97:
+                inner_block.append(anvil.Block('minecraft', 'emerald_ore'))
+                inner_block.append(anvil.Block('minecraft', 'deepslate_emerald_ore'))
 
-            # emerald planet 5%
+            # diamond planet 3%
             else:
-                inner_block = anvil.Block('minecraft', 'emerald_ore')
-                outer_block = anvil.Block('minecraft', 'stone')
+                inner_block.append(anvil.Block('minecraft', 'diamond_ore'))
+                inner_block.append(anvil.Block('minecraft', 'deepslate_diamond_ore'))
 
         else:
         # other 10 %
@@ -224,16 +228,21 @@ class World:
 
             # deep_dark planet
             elif 0.60 < choice_2 <= 0.80:
-                inner_block = [anvil.Block('minecraft', 'skulk'),
-                                             anvil.Block('minecraft', 'skulk_sensor'),
-                                             anvil.Block('minecraft', 'skulk_catalyst')]
-                outer_block = anvil.Block('minecraft', 'skulk')
+                inner_block = [anvil.Block('minecraft', 'sculk'),
+                               anvil.Block('minecraft', 'sculk_sensor'),
+                               anvil.Block('minecraft', 'sculk_catalyst'),
+                               anvil.Block('minecraft', 'stone_brick'),
+                               anvil.Block('minecraft', 'obsidian'),
+                               anvil.Block('minecraft', 'sculk_shrieker')
+                                            ]
+                outer_block = [anvil.Block('minecraft', 'sculk'), anvil.Block('minecraft', 'sculk_sensor'),
+                               anvil.Block('minecraft', 'stone_brick'), anvil.Block('minecraft', 'obsidian')]
 
             # ocean planet
             else:
-                outer_block = [anvil.Block('minecraft', 'prismarine_brick'), anvil.Block('minecraft', 'sea_lantern')]
-                inner_block = [anvil.Block('minecraft', 'dark_prismarine'),
-                                             anvil.Block('minecraft', 'prismarine')]
+                outer_block = [anvil.Block('minecraft', 'prismarine'), anvil.Block('minecraft', 'prismarine'),
+                               anvil.Block('minecraft', 'sea_lantern')]
+                inner_block = [anvil.Block('minecraft', 'dark_prismarine'), anvil.Block('minecraft', 'prismarine')]
 
         return inner_block, outer_block, soil_planet
 
