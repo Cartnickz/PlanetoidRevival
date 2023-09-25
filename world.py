@@ -1,80 +1,9 @@
 import math
 
 import anvil
-from random import choice
+import random
 
 class World:
-
-    @staticmethod
-    def create_region(i, j):
-        # Create a new region with the `EmptyRegion` class at 0, 0 (in region coords)
-        region = anvil.EmptyRegion(i, j)
-
-        # Create `Block` objects that are used to set blocks
-        stone = anvil.Block('minecraft', 'stone')
-        dirt = anvil.Block('minecraft', 'dirt')
-
-        # Make a 16x16x16 cube of either stone or dirt blocks
-        for y in range(16):
-            for z in range(512):
-                for x in range(512):
-                    region.set_block(choice((stone, dirt)), i * 512 + x, y, j * 512 + z)
-
-        # Save to a file
-        filename = 'region/r.' + str(i) + '.' + str(j) + '.mca'
-        region.save(filename)
-
-    @staticmethod
-    def water_floor(i, j):
-        region = anvil.EmptyRegion(i, j)
-        bedrock = anvil.Block('minecraft', 'bedrock')
-        water = anvil.Block('minecraft', 'water')
-        print(i, j)
-        region.fill(bedrock, i * 512, -63, j * 512, i * 512 + 511, -63, j * 512 + 511)
-        region.fill(water, i * 512, -62, j * 512, i * 512 + 511, -60, j * 512 + 511)
-        filename = 'region/r.' + str(i) + '.' + str(j) + '.mca'
-        region.save(filename)
-
-    @staticmethod
-    def empty(i, j):
-        region = anvil.EmptyRegion(i, j)
-        air = anvil.Block('minecraft', 'air')
-        print(i, j)
-        region.fill(air, i*512, 0, j*512, i*512+511, 0, j*512+511)
-        filename = 'region/r.' + str(i) + '.' + str(j) + '.mca'
-        region.save(filename)
-
-    @staticmethod
-    def sphere_test(x, y, z, size):
-        region = anvil.EmptyRegion(0, 0)
-        # Create `Block` objects that are used to set blocks
-        stone = anvil.Block('minecraft', 'stone')
-        dirt = anvil.Block('minecraft', 'dirt')
-        grass = anvil.Block('minecraft', 'grass_block')
-        bedrock = anvil.Block('minecraft', 'bedrock')
-        water = anvil.Block('minecraft', 'water')
-
-        top_layer_active = True
-        top_layer = -65
-        for b in range(size, -size, -1):
-            if top_layer_active:
-                top_layer = b
-            for a in range(-size, size):
-                for c in range(-size, size):
-                    if math.sqrt((a)**2 + (b)**2 + (c)**2) < size:
-                        if top_layer_active or top_layer == b:
-                            region.set_block(grass, a + x, b + y, c + z)
-                            top_layer = b
-                            top_layer_active = False
-                        else:
-                            region.set_block(dirt, a + x, b + y, c + z)
-
-        region.fill(bedrock, 0, -63, 511, 0, -63, 511)
-        region.fill(water, 0, -62, 511, 0, -60, 511)
-
-        filename = 'region/r.0.0.mca'
-        region.save(filename)
-
     @staticmethod
     def sphere(size):
         inner = []
@@ -104,9 +33,28 @@ class World:
         for coords in list:
             region.set_block(block, region_coords[0] + coords[0],
                              region_coords[1] + coords[1], region_coords[2] + coords[2])
-        print("Blocks applied")
         return region
 
+    @staticmethod
+    def make_planets(region, inner, outer, inner_block, outer_block, rand_size, rand_coords):
+        for n in range(len(rand_coords)):
+            inner, outer = World.sphere(rand_size[n])
+            region = World.apply_block(region, rand_coords[n], inner, inner_block)
+            region = World.apply_block(region, rand_coords[n], outer, outer_block)
 
+    @staticmethod
+    def planet_array(count, region_origin):
+        p_count = count
+        rand_size_list = []
+        rand_coords = []
+        for planet in range(0, p_count):
+            rand_size = random.randint(4, 20)
+            rand_size_list += [rand_size]
+            rand_x = random.randint(region_origin[0] + rand_size, region_origin[0] + 511 - rand_size)
+            rand_y = random.randint(-35 + rand_size, 200 - rand_size)
+            rand_z = random.randint(region_origin[1] + rand_size, region_origin[1] + 511 - rand_size)
+            rand_coords += [(rand_x, rand_y, rand_z)]
+
+        return rand_size_list, rand_coords
 
 
