@@ -5,60 +5,64 @@ import time
 import numpy as np
 import random
 
-# open region files
+# start program timer & set program variables
 start_time = time.time()
-files_completed = 0
-region_radius = 3
-files_total = (region_radius * 2)**2
+region_radius = 4
 water_floor = False
+planet_count = 150
+
 
 def main(region_radius):
     if __name__ == "__main__":
         print("Starting Planetoids Generator!")
+
+        # generate the coordinates for all the region
         file_gen_list = []
         for i in range(-region_radius, region_radius):
             for j in range(-region_radius, region_radius):
                 file_gen_list += [(i, j)]
 
+        # set up multiprocessing
         thread_count = multiprocessing.cpu_count()-1
         file_assign = np.array_split(file_gen_list, thread_count)
-
         all_processes = []
+
+        # generate overworld files and wait until finished
         for thread_num in range(thread_count):
-            p = multiprocessing.Process(target=process_regions, args=(file_assign[thread_num],))
+            p = multiprocessing.Process(target=process_overworld, args=(file_assign[thread_num],))
             all_processes.append(p)
             p.start()
-
         for p in all_processes:
             p.join()
-        print("Done!")
+        print("Overworld Complete!")
 
-def process_regions(process_list):
+        # start generating nether planets
+        print("Starting to generate nether!")
+
+
+
+# function that helps setup multiprocessing
+def process_overworld(process_list):
     for region in process_list:
-        create_region_file(region[0], region[1])
+        create_overworld_files(region[0], region[1])
 
-
-def create_region_file(i, j):
+# function that populates the overworld region files
+def create_overworld_files(i, j):
     region = anvil.EmptyRegion(i, j)
     region_origin = (i * 512, j * 512)
 
-    # define block objects
-    bedrock = anvil.Block('minecraft', 'bedrock')
-    water = anvil.Block('minecraft', 'water')
-
     # make an array of coordinates for the location of each sphere
-    rand_size_list, rand_coords = wd.planet_array(50, region_origin)
+    rand_size_list, rand_coords = wd.planet_array(planet_count, region_origin)
 
-    # add floor (bedrock and water, can switch to air later)
+    # add floor
     if water_floor:
-        subfloor = wd.plane(1)
-        floor = wd.plane(2)
-        region = wd.apply_block(region, (region_origin[0], -63, region_origin[1]), subfloor, bedrock)
-        region = wd.apply_block(region, (region_origin[0], -62, region_origin[1]), floor, water)
-    else:
-        subfloor = wd.plane(1)
         region = wd.apply_block(region, (region_origin[0], -63, region_origin[1]),
-                                subfloor, anvil.Block('minecraft', 'air'))
+                                wd.plane(1), anvil.Block('minecraft', 'bedrock'))
+        region = wd.apply_block(region, (region_origin[0], -62, region_origin[1]),
+                                wd.plane(2), anvil.Block('minecraft', 'water'))
+    else:
+        region = wd.apply_block(region, (region_origin[0], -63, region_origin[1]),
+                                wd.plane(1), anvil.Block('minecraft', 'air'))
 
     # create spheres at previously defined locations and fill blocks
     wd.make_planets(region, rand_size_list, rand_coords)
@@ -74,7 +78,28 @@ def create_region_file(i, j):
     if j >= 0:
         j_str = "+" + str(j)
 
-    print("--- Finished region " + i_str + '\t' + j_str + " in %s seconds ---" % (time.time() - start_time))
+    print("--- Finished overworld region " + i_str + '\t' + j_str + " in %s seconds ---" % (time.time() - start_time))
+
+def process_nether(process_list):
+    for region in process_list:
+        create_nether_files(region[0], region[1])
+
+def create_nether_files(i, j):
+    region = anvil.EmptyRegion(i, j)
+    region_origin = (i * 512, j * 512)
+
+    # region file
+    filename = 'DIM-1/region/r.' + str(i) + '.' + str(j) + '.mca'
+    region.save(filename)
+
+    i_str = str(i)
+    if i >= 0:
+        i_str = "+" + str(i)
+    j_str = str(j)
+    if j >= 0:
+        j_str = "+" + str(j)
+
+    print("--- Finished nether region " + i_str + '\t' + j_str + " in %s seconds ---" % (time.time() - start_time))
 
 main(region_radius)
 
